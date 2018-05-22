@@ -70,18 +70,8 @@ int main(void)
 		  //USART_SendData(USART1,(uint16_t)'A');
 	  }
 
-	  if(1 == CoreBoardUsartType.RX_Flag)
-	  {
-		  CoreBoardUsartType.RX_Flag = 0;
-		  //__disable_irq();
-		  for(i = 0; i < CoreBoardUsartType.RX_Size;i++)
-		  {
-			  USART_SendData(USART1,(uint16_t)CoreBoardUsartType.RX_pData[i]);
-
-		  }
-		  //__enable_irq();
-
-	  }
+	  DS_HandingUartDataFromCoreBoard();
+	  DS_HandingCoreBoardRequest();
 
 	  if(1 == LeftBoardUsartType.RX_Flag)
 	  {
