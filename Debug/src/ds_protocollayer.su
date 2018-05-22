@@ -1,0 +1,6 @@
+ds_protocollayer.c:24:16:GetAvailableTableID	16	static
+ds_protocollayer.c:39:16:WriteStatusToTable	24	static
+ds_protocollayer.c:56:16:getXORCode	24	static
+ds_protocollayer.c:68:25:DS_HandingUartData	32	static
+ds_protocollayer.c:222:18:DS_HandingUartDataFromCoreBoard	16	static
+ds_protocollayer.c:229:18:DS_HandingCoreBoardRequest	16	static

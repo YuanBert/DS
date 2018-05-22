@@ -30,6 +30,9 @@ SOFTWARE.
 /* Includes */
 #include <stddef.h>
 #include "stm32f10x.h"
+#include "main.h"
+#include "usart.h"
+#include "ds_protocollayer.h"
 
 
 
@@ -56,12 +59,38 @@ int main(void)
   /* TODO - Add your application code here */
 
   /* Infinite loop */
+  MX_USART1_Init();
+  MX_USART2_Init();
   while (1)
   {
 	  i++;
 	  if(i > 4096)
 	  {
 		  i =0;
+		  //USART_SendData(USART1,(uint16_t)'A');
+	  }
+
+	  if(1 == CoreBoardUsartType.RX_Flag)
+	  {
+		  CoreBoardUsartType.RX_Flag = 0;
+		  //__disable_irq();
+		  for(i = 0; i < CoreBoardUsartType.RX_Size;i++)
+		  {
+			  USART_SendData(USART1,(uint16_t)CoreBoardUsartType.RX_pData[i]);
+
+		  }
+		  //__enable_irq();
+
+	  }
+
+	  if(1 == LeftBoardUsartType.RX_Flag)
+	  {
+		  LeftBoardUsartType.RX_Flag = 0;
+		  for(i = 0; i < LeftBoardUsartType.RX_Size;i++)
+		  {
+			  USART_SendData(USART2,(uint16_t)LeftBoardUsartType.RX_pData[i]);
+		  }
+
 	  }
   }
 }

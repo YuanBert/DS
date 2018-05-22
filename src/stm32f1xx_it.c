@@ -29,7 +29,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_it.h"
-
+#include "usart.h"
 /** @addtogroup IO_Toggle
   * @{
   */
@@ -38,6 +38,11 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+extern USARTRECIVETYPE CoreBoardUsartType;
+extern USARTRECIVETYPE LeftBoardUsartType;
+
+extern void DS_CoreBoardUsartReceive_IDLE();
+extern void DS_LeftBoardUsartReceive_IDLE();
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -161,6 +166,14 @@ void SysTick_Handler(void)
 /**
   * @}
   */ 
+void USART1_IRQHandler(void)
+{
+	DS_CoreBoardUsartReceive_IDLE();
+}
 
 
+void USART2_IRQHandler(void)
+{
+	DS_LeftBoardUsartReceive_IDLE();
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
