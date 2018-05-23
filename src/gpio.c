@@ -6,7 +6,7 @@
  */
 #include "gpio.h"
 
-void GPIO_Init(void)
+void DS_GPIO_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitTypeDef_Struct;
 

@@ -32,6 +32,7 @@ SOFTWARE.
 #include "stm32f10x.h"
 #include "main.h"
 #include "usart.h"
+#include "adc.h"
 #include "ds_protocollayer.h"
 
 
@@ -42,7 +43,8 @@ SOFTWARE.
 
 /* Private macro */
 /* Private variables */
-
+uint8_t gADCConvOKFlag;
+int adcData;
 /* Private function prototypes */
 /* Private functions */
 
@@ -61,6 +63,8 @@ int main(void)
   /* Infinite loop */
   MX_USART1_Init();
   MX_USART2_Init();
+  DS_ADC_Init();
+
   while (1)
   {
 	  i++;
@@ -73,6 +77,15 @@ int main(void)
 	  DS_HandingUartDataFromCoreBoard();
 	  DS_HandingCoreBoardRequest();
 
+	  if(1 == gADCConvOKFlag)
+	  {
+		  gADCConvOKFlag = 0;
+		  adcData = ADC_GetConversionValue(ADC1);
+		  USART_SendData(USART2,adcData);
+		  USART_SendData(USART2,adcData >> 8);
+		  ADC_SoftwareStartConvCmd(ADC1,ENABLE);
+	  }
+
 	  if(1 == LeftBoardUsartType.RX_Flag)
 	  {
 		  LeftBoardUsartType.RX_Flag = 0;
@@ -82,6 +95,7 @@ int main(void)
 		  }
 
 	  }
+
   }
 }
 

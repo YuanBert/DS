@@ -38,6 +38,9 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+extern uint8_t gADCConvOKFlag;
+extern int adcData;
+
 extern USARTRECIVETYPE CoreBoardUsartType;
 extern USARTRECIVETYPE LeftBoardUsartType;
 
@@ -175,5 +178,17 @@ void USART1_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
 	DS_LeftBoardUsartReceive_IDLE();
+}
+
+void ADC1_2_IRQHandler(void)
+{
+	gADCConvOKFlag = 1;
+	ADC_ClearFlag(ADC1,ADC_FLAG_EOC);
+}
+
+void DMA1_Channel1_IRQHandler(void)
+{
+	DMA_ClearITPendingBit(DMA1_IT_TC1);
+	DMA_ClearFlag(DMA1_FLAG_TC1);
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -11,6 +11,6 @@
 #include "stm32f10x.h"
 #include "main.h"
 
-void GPIO_Init(void);
+void DS_GPIO_Init(void);
 
 #endif /* GPIO_H_ */

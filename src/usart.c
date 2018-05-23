@@ -44,13 +44,12 @@ void DS_CoreBoardUsartReceive_IDLE()
 		CoreBoardUsartType.RX_Flag = 1;
 		DMA_SetCurrDataCounter(DMA1_Channel5,USART_RX_BUF_LEN);
 		DMA_Cmd(DMA1_Channel5,ENABLE);
-		//USART_ClearITPendingBit(USART1,USART_IT_IDLE);
 		USART_ReceiveData(USART1);
 	}
 }
 
 
-void MX_USART1_Init()
+void MX_USART1_Init(void)
 {
 	USART_InitTypeDef USART_InitTypeDef_Struct;
 	GPIO_InitTypeDef GPIO_InitTypeDef_Struct;
@@ -80,6 +79,7 @@ void MX_USART1_Init()
 	NVIC_InitTypeDef_Struct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitTypeDef_Struct);
 
+
 	/* USART1 DMA ≈‰÷√ */
 	DMA_DeInit(DMA1_Channel5);
 	DMA_InitTypeDef_Struct.DMA_DIR = DMA_DIR_PeripheralSRC;
@@ -105,9 +105,8 @@ void MX_USART1_Init()
 	USART_InitTypeDef_Struct.USART_WordLength = USART_WordLength_8b;
 	USART_InitTypeDef_Struct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 	USART_Init(USART1, &USART_InitTypeDef_Struct);
-	USART_ITConfig(USART1, USART_IT_IDLE, ENABLE);
 	USART_Cmd(USART1,ENABLE);
-
+	USART_ITConfig(USART1, USART_IT_IDLE, ENABLE);
 }
 void MX_USART2_Init(void)
 {
@@ -165,10 +164,10 @@ void MX_USART2_Init(void)
 	USART_InitTypeDef_Struct.USART_WordLength = USART_WordLength_8b;
 	USART_InitTypeDef_Struct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 	USART_Init(USART2,&USART_InitTypeDef_Struct);
-	USART_ITConfig(USART2, USART_IT_IDLE, ENABLE);
 	USART_Cmd(USART2,ENABLE);
-
+	USART_ITConfig(USART2, USART_IT_IDLE, ENABLE);
 }
+
 void MX_USART3_Init(void)
 {
 
