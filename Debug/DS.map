@@ -1199,6 +1199,18 @@ Discarded input sections
                 0x00000000       0x10 src\system_stm32f10x.o
  .text.SystemCoreClockUpdate
                 0x00000000       0xd8 src\system_stm32f10x.o
+ .text          0x00000000        0x0 src\tim.o
+ .data          0x00000000        0x0 src\tim.o
+ .bss           0x00000000        0x0 src\tim.o
+ .debug_info    0x00000000       0xb3 src\tim.o
+ .debug_abbrev  0x00000000       0x5c src\tim.o
+ .debug_aranges
+                0x00000000       0x18 src\tim.o
+ .debug_line    0x00000000      0x170 src\tim.o
+ .debug_str     0x00000000      0x1ab src\tim.o
+ .comment       0x00000000       0x7d src\tim.o
+ .ARM.attributes
+                0x00000000       0x33 src\tim.o
  .text          0x00000000        0x0 src\tiny_printf.o
  .data          0x00000000        0x0 src\tiny_printf.o
  .bss           0x00000000        0x0 src\tiny_printf.o
@@ -1306,6 +1318,7 @@ LOAD src\main.o
 LOAD src\startup_stm32f10x_hd.o
 LOAD src\stm32f1xx_it.o
 LOAD src\system_stm32f10x.o
+LOAD src\tim.o
 LOAD src\tiny_printf.o
 LOAD src\usart.o
                 0x00000080                malloc_getpagesize_P = 0x80
