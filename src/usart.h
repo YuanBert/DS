@@ -23,6 +23,7 @@ typedef struct sUsartReciveType   USARTRECIVETYPE,    *pUSARTRECIVETYPE;
 
 extern USARTRECIVETYPE CoreBoardUsartType;
 extern USARTRECIVETYPE LeftBoardUsartType;
+
 void MX_USART1_Init(void);
 void MX_USART2_Init(void);
 void MX_USART3_Init(void);

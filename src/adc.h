@@ -8,6 +8,7 @@
 #ifndef ADC_H_
 #define ADC_H_
 #include "stm32f10x.h"
+#include "gpio.h"
 
 #define DS_ADC_BUF_LEN	20
 #define DS_ADC_Pin		GPIO_Pin_2
@@ -15,5 +16,6 @@
 
 
 void DS_ADC_Init(void);
+uint16_t DS_GetADC_Value(void);
 
 #endif /* ADC_H_ */

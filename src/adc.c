@@ -12,13 +12,13 @@ void DS_ADC_Init()
 {
 	GPIO_InitTypeDef GPIO_InitTypeDef_Struct;
 	ADC_InitTypeDef	ADC_InitTypeDef_Struct;
-	NVIC_InitTypeDef NVIC_InitTypeDef_Struct;
-	DMA_InitTypeDef DMA_InitTypeDef_Struct;
+	//NVIC_InitTypeDef NVIC_InitTypeDef_Struct;
+	//DMA_InitTypeDef DMA_InitTypeDef_Struct;
 
 	/*  πƒ‹  ±÷” */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC,ENABLE);
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+	//RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 
 	/* ≥ı ºªØADC - GPIO */
@@ -26,7 +26,9 @@ void DS_ADC_Init()
 	GPIO_InitTypeDef_Struct.GPIO_Mode = GPIO_Mode_AIN;
 	GPIO_Init(DS_ADC_Port,&GPIO_InitTypeDef_Struct);
 
+
 	/* ADC NVIC ≈‰÷√ */
+	/*
 	{
 		NVIC_InitTypeDef_Struct.NVIC_IRQChannel = DMA1_Channel1_IRQn;//ADC1_2_IRQn;
 		NVIC_InitTypeDef_Struct.NVIC_IRQChannelPreemptionPriority = 0;
@@ -34,8 +36,10 @@ void DS_ADC_Init()
 		NVIC_InitTypeDef_Struct.NVIC_IRQChannelCmd = ENABLE;
 		NVIC_Init(&NVIC_InitTypeDef_Struct);
 	}
+	*/
 
 	/* ADC DMA≈‰÷√ */
+	/*
 	DMA_DeInit(DMA1_Channel1);
 	DMA_InitTypeDef_Struct.DMA_DIR = DMA_DIR_PeripheralSRC;
 	DMA_InitTypeDef_Struct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -52,13 +56,13 @@ void DS_ADC_Init()
 	DMA_Cmd(DMA1_Channel1,ENABLE);
 	ADC_DMACmd(ADC1,ENABLE);
 	DMA_ITConfig(DMA1_Channel1,DMA_IT_TC,ENABLE);
-
+	*/
 	/* ADC ≈‰÷√ */
 	ADC_DeInit(ADC1);
 	ADC_InitTypeDef_Struct.ADC_Mode = ADC_Mode_Independent;
 	ADC_InitTypeDef_Struct.ADC_DataAlign = ADC_DataAlign_Right;
 	ADC_InitTypeDef_Struct.ADC_ScanConvMode = DISABLE;
-	ADC_InitTypeDef_Struct.ADC_ContinuousConvMode = ENABLE;
+	ADC_InitTypeDef_Struct.ADC_ContinuousConvMode = DISABLE;
 	ADC_InitTypeDef_Struct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
 	ADC_InitTypeDef_Struct.ADC_NbrOfChannel = 1;
 	ADC_Init(ADC1,&ADC_InitTypeDef_Struct);
@@ -74,4 +78,12 @@ void DS_ADC_Init()
 
 	ADC_SoftwareStartConvCmd(ADC1,ENABLE);
 
+}
+uint16_t DS_GetADC_Value()
+{
+	uint16_t adcValue;
+	ADC_SoftwareStartConvCmd(ADC1,ENABLE);
+	while(!ADC_GetFlagStatus(ADC1,ADC_FLAG_EOC));
+	adcValue = ADC_GetConversionValue(ADC1);
+	return adcValue;
 }

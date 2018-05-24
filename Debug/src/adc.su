@@ -1,1 +1,2 @@
-adc.c:11:6:DS_ADC_Init	80	static
+adc.c:11:6:DS_ADC_Init	32	static
+adc.c:82:10:DS_GetADC_Value	16	static

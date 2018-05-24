@@ -55,4 +55,12 @@ DS_StatusTypeDef DS_HandingUartDataFromCoreBoard(void);
 
 DS_StatusTypeDef DS_HandingCoreBoardRequest(void);
 
+DS_StatusTypeDef DS_HandingUartDataFromLeftBoard(void);
+
+DS_StatusTypeDef DS_HandingLeftBoardRequest(void);
+
+DS_StatusTypeDef DS_SendDataToCoreBoard(uint8_t *dataBuffer,uint16_t dataLength);
+
+DS_StatusTypeDef DS_SendDataToLeftDoorBoard(uint8_t *dataBuffer,uint16_t dataLength);
+
 #endif /* DS_PROTOCOLLAYER_H_ */

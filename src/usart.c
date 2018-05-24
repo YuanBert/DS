@@ -6,6 +6,7 @@
  */
 #include "usart.h"
 #include "stm32f10x.h"
+#include "gpio.h"
 
 #define USARTBAUDRATE		115200
 #define USART1_TX_Port		GPIOA
@@ -166,6 +167,7 @@ void MX_USART2_Init(void)
 	USART_Init(USART2,&USART_InitTypeDef_Struct);
 	USART_Cmd(USART2,ENABLE);
 	USART_ITConfig(USART2, USART_IT_IDLE, ENABLE);
+	GPIO_ResetBits(CTR485A_EN_Port,CTR485A_EN_Pin);
 }
 
 void MX_USART3_Init(void)

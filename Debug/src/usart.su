@@ -1,5 +1,5 @@
-usart.c:23:6:DS_LeftBoardUsartReceive_IDLE	8	static
-usart.c:37:6:DS_CoreBoardUsartReceive_IDLE	8	static
-usart.c:52:6:MX_USART1_Init	80	static
-usart.c:111:6:MX_USART2_Init	80	static
-usart.c:171:6:MX_USART3_Init	4	static
+usart.c:24:6:DS_LeftBoardUsartReceive_IDLE	8	static
+usart.c:38:6:DS_CoreBoardUsartReceive_IDLE	8	static
+usart.c:53:6:MX_USART1_Init	80	static
+usart.c:112:6:MX_USART2_Init	80	static
+usart.c:173:6:MX_USART3_Init	4	static

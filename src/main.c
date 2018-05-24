@@ -61,9 +61,11 @@ int main(void)
   /* TODO - Add your application code here */
 
   /* Infinite loop */
+  DS_GPIO_Init();
   MX_USART1_Init();
   MX_USART2_Init();
   DS_ADC_Init();
+
 
   while (1)
   {
@@ -77,6 +79,10 @@ int main(void)
 	  DS_HandingUartDataFromCoreBoard();
 	  DS_HandingCoreBoardRequest();
 
+	  DS_HandingUartDataFromLeftBoard();
+	  DS_HandingLeftBoardRequest();
+
+
 	  if(1 == gADCConvOKFlag)
 	  {
 		  gADCConvOKFlag = 0;
@@ -85,17 +91,6 @@ int main(void)
 		  USART_SendData(USART2,adcData >> 8);
 		  ADC_SoftwareStartConvCmd(ADC1,ENABLE);
 	  }
-
-	  if(1 == LeftBoardUsartType.RX_Flag)
-	  {
-		  LeftBoardUsartType.RX_Flag = 0;
-		  for(i = 0; i < LeftBoardUsartType.RX_Size;i++)
-		  {
-			  USART_SendData(USART2,(uint16_t)LeftBoardUsartType.RX_pData[i]);
-		  }
-
-	  }
-
   }
 }
 

@@ -7,6 +7,7 @@
 #include "ds_protocollayer.h"
 #include "usart.h"
 #include "main.h"
+#include "gpio.h"
 
 AckedStruct    CoreBoardAckedData;
 AckedStruct    LeftDoorBoardAckedData;
@@ -258,5 +259,67 @@ DS_StatusTypeDef DS_HandingCoreBoardRequest()
 	  return state;
 }
 
+DS_StatusTypeDef DS_HandingUartDataFromLeftBoard()
+{
+	DS_StatusTypeDef state = DS_OK;
+	state = DS_HandingUartData(&LeftDoorBoardRevDataStruct, &LeftDoorBoardAckedData, &LeftBoardUsartType, LeftDoorRevDataBuf);
+	return state;
+}
+
+DS_StatusTypeDef DS_HandingLeftBoardRequest()
+{
+	DS_StatusTypeDef state = DS_OK;
+	uint8_t temTableID;
+
+	if(LeftDoorBoardRevDataStruct.RevOKFlag)
+	{
+		temTableID = GetAvailableTableID();
+		if(0xFF == temTableID)
+		{
+			return state;
+		}
+
+		switch((LeftDoorBoardRevDataStruct.CmdType) & 0xF0)
+		{
+			case 0xB0:break;
+			case 0xC0:break;
+			case 0xD0:break;
+			case 0xE0:break;
+			case 0xF0:break;
+			default:state = DS_ERR;break;
+		}
+
+		LeftDoorBoardRevDataStruct.NumberOfBytesReceived = 0;
+		LeftDoorBoardRevDataStruct.DataLength = 0;
+		LeftDoorBoardRevDataStruct.TotalLength = 0;
+		LeftDoorBoardRevDataStruct.RevOKFlag = 0;
+	}
+	return state;
+}
+
+DS_StatusTypeDef DS_SendDataToCoreBoard(uint8_t *dataBuffer,uint16_t dataLength)
+{
+	DS_StatusTypeDef state = DS_OK;
+	int i = 0;
+	for(i = 0; i < dataLength; i++)
+	{
+		USART_SendData(USART1,*(dataBuffer + i));
+	}
+	return state;
+}
+
+
+DS_StatusTypeDef DS_SendDataToLeftDoorBoard(uint8_t *dataBuffer,uint16_t dataLength)
+{
+	DS_StatusTypeDef state = DS_OK;
+	int i = 0;
+	GPIO_SetBits(CTR485A_EN_Port, CTR485A_EN_Pin);
+	for(i = 0; i < dataLength; i++)
+	{
+		USART_SendData(USART2,*(dataBuffer + i));
+	}
+	GPIO_ResetBits(CTR485A_EN_Port,CTR485A_EN_Pin);
+	return state;
+}
 
 
