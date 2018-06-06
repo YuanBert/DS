@@ -9,5 +9,7 @@
 #define TIM_H_
 #include "stm32f10x.h"
 
+void DS_TimerInit(void);
+
 
 #endif /* TIM_H_ */

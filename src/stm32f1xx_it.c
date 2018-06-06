@@ -46,6 +46,7 @@ extern USARTRECIVETYPE LeftBoardUsartType;
 
 extern void DS_CoreBoardUsartReceive_IDLE();
 extern void DS_LeftBoardUsartReceive_IDLE();
+extern void TIM3_IRQHandlerCallback(void);
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -190,5 +191,15 @@ void DMA1_Channel1_IRQHandler(void)
 {
 	DMA_ClearITPendingBit(DMA1_IT_TC1);
 	DMA_ClearFlag(DMA1_FLAG_TC1);
+}
+
+void TIM3_IRQHandler(void)
+{
+	if(RESET != TIM_GetITStatus(TIM3,TIM_IT_Update))
+	{
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+
+		TIM3_IRQHandlerCallback();
+	}
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

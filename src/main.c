@@ -34,6 +34,7 @@ SOFTWARE.
 #include "usart.h"
 #include "adc.h"
 #include "ds_protocollayer.h"
+#include "tim.h"
 
 
 
@@ -45,8 +46,10 @@ SOFTWARE.
 /* Private variables */
 uint8_t gADCConvOKFlag;
 int adcData;
+uint16_t gTimeCount;
 /* Private function prototypes */
 /* Private functions */
+void TIM3_IRQHandlerCallback(void);
 
 /**
 **===========================================================================
@@ -65,6 +68,7 @@ int main(void)
   MX_USART1_Init();
   MX_USART2_Init();
   DS_ADC_Init();
+  DS_TimerInit();
 
 
   while (1)
@@ -92,6 +96,15 @@ int main(void)
 		  ADC_SoftwareStartConvCmd(ADC1,ENABLE);
 	  }
   }
+}
+
+void TIM3_IRQHandlerCallback()
+{
+	gTimeCount++;
+	if(gTimeCount > 5000)
+	{
+		gTimeCount = 0;
+	}
 }
 
 #ifdef  USE_FULL_ASSERT
