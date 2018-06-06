@@ -9,6 +9,8 @@
 #include "main.h"
 #include "gpio.h"
 
+HaningFlag	  gSendOpenFlag;
+
 AckedStruct    CoreBoardAckedData;
 AckedStruct    LeftDoorBoardAckedData;
 
@@ -37,7 +39,7 @@ static uint8_t GetAvailableTableID(void)
   return reCode;
 }
 
-static uint8_t WriteStatusToTable(uint8_t tableID,uint8_t statusCode)//statusCode : 0-表示空，1-表示正在处理，2-表示处理完成可以回复
+static uint8_t WriteStatusToTable(uint8_t tableID,uint8_t statusCode) //statusCode : 0-表示空，1-表示正在处理，2-表示处理完成可以回复
 {
     uint8_t reCode = 0xFF;
     if(tableID > 16)
@@ -242,7 +244,30 @@ DS_StatusTypeDef DS_HandingCoreBoardRequest()
 
 		  switch((CoreBoardRevDataStruct.CmdType) & 0xF0)
 		  {
-		  	  case 0xB0:break;
+		  	  case 0xB0:
+		  		  sNeedToAckStruct.AckCmdCode[tempTableID] = 0xAB;
+		  		  if(0xB1 == CoreBoardRevDataStruct.CmdType && 0x01 == CoreBoardRevDataStruct.CmdParam)
+		  		  {
+		  			  /* 用于处理视频触发下的情况  */
+		  			  sNeedToAckStruct.AckCodeH[tempTableID] = 0x01;
+		  			  sNeedToAckStruct.DeviceType[tempTableID] = 0x01;
+		  			  Table.tab[tempTableID] = 0x02;	//处理函数
+		  			  Table.tabCnt++;
+		  			  break;
+		  		  }
+		  		  if(0xB2 == CoreBoardRevDataStruct.CmdType && 0x01 == CoreBoardRevDataStruct.CmdParam)
+		  		  {
+		  			  sNeedToAckStruct.AckCodeH[tempTableID] = 0x02;
+		  			  //sNeedToAckStruct.AckCodeL[tempTableID] = 0x00;
+		  			  sNeedToAckStruct.DeviceType[tempTableID] = 0x01;
+		  			  gSendOpenFlag.Flag = 1;
+		  			  gSendOpenFlag.position = tempTableID;
+		  			  Table.tab[tempTableID] = 0x01;
+		  			  Table.tabCnt++;
+		  			  break;
+		  		  }
+		  		  break;
+
 		  	  case 0xC0:break;
 		  	  case 0xD0:break;
 		  	  case 0xE0:break;
@@ -254,6 +279,12 @@ DS_StatusTypeDef DS_HandingCoreBoardRequest()
 		  CoreBoardRevDataStruct.DataLength = 0;
 		  CoreBoardRevDataStruct.TotalLength = 0;
 		  CoreBoardRevDataStruct.RevOKFlag = 0;
+
+		  if(1 == gSendOpenFlag.Flag)
+		  {
+			  	 DS_SendDataToLeftDoorBoard(CoreRevDataBuf, 7);
+			  	 gSendOpenFlag.Flag = 0x02;
+		  }
 
 	  }
 	  return state;
@@ -284,7 +315,19 @@ DS_StatusTypeDef DS_HandingLeftBoardRequest()
 			case 0xB0:break;
 			case 0xC0:break;
 			case 0xD0:break;
-			case 0xE0:break;
+			case 0xE0:
+				//if()
+				if(0 == LeftDoorBoardRevDataStruct.CmdParam)
+				{
+					sNeedToAckStruct.AckCodeL[gSendOpenFlag.position] = 0;
+				}
+				else if(1 == LeftDoorBoardRevDataStruct.CmdParam)
+				{
+					sNeedToAckStruct.AckCodeL[gSendOpenFlag.position] = 1;
+				}
+				gSendOpenFlag.Flag = 0x03;
+
+				break;
 			case 0xF0:break;
 			default:state = DS_ERR;break;
 		}
@@ -320,6 +363,85 @@ DS_StatusTypeDef DS_SendDataToLeftDoorBoard(uint8_t *dataBuffer,uint16_t dataLen
 	}
 	GPIO_ResetBits(CTR485A_EN_Port,CTR485A_EN_Pin);
 	return state;
+}
+
+
+DS_StatusTypeDef DS_CheckHandingFlag(void)
+{
+	DS_StatusTypeDef state = DS_OK;
+	if(3 == gSendOpenFlag.Flag)
+	{
+		gSendOpenFlag.Flag = 0;
+		Table.tab[gSendOpenFlag.position] = 0x02;
+	}
+
+
+	return state;
+}
+/*******************************************************************************
+*
+*       Function        :DS_SendAckData()
+*
+*       Input           :void
+*
+*       Return          :DS_StatusTypeDef
+*
+*       Description     :--
+*
+*
+*       Data            :2018/2/5
+*       Author          :bertz
+*******************************************************************************/
+DS_StatusTypeDef DS_SendAckData(void)
+{
+	DS_StatusTypeDef state = DS_OK;
+	uint8_t tempAck[6];
+	uint8_t i = 0;
+
+	if(Table.tabCnt < 1)
+	{
+		return state;
+	}
+	tempAck[0] = 0x5B;
+	tempAck[5] = 0x5D;
+	for(i = 0; i < 16; i++)
+	{
+		if(0x02 == Table.tab[i])
+		{
+			Table.tab[i] = 0;
+			Table.tabCnt--;
+
+			tempAck[1] = sNeedToAckStruct.AckCmdCode[i];
+			tempAck[2] = sNeedToAckStruct.AckCodeH[i];
+			tempAck[3] = sNeedToAckStruct.AckCodeL[i];
+
+			tempAck[4] = getXORCode(tempAck + 1, 3);
+
+			if(0x01 == sNeedToAckStruct.DeviceType[i])
+			{
+				/* Send to Core Board */
+				sNeedToAckStruct.DeviceType[i] = 0;
+				DS_SendDataToCoreBoard(tempAck, 6);
+			}
+			if(0x02 == sNeedToAckStruct.DeviceType[i])
+			{
+				/* Send to Left DoorBoard */
+				sNeedToAckStruct.DeviceType[i] = 0;
+				DS_SendDataToLeftDoorBoard(tempAck, 6);
+
+			}
+			if(0x03 == sNeedToAckStruct.DeviceType[i])
+			{
+				/*Send to Right Door Board*/
+				sNeedToAckStruct.DeviceType[i] = 0;
+				//DS_SendDataToRightDoorBoard(tempAck, 6, 0xFFFF);
+			}
+
+		}
+
+	}
+	return state;
+
 }
 
 

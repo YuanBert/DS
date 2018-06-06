@@ -60,6 +60,11 @@ void DS_GPIO_Init(void)
 	GPIO_InitTypeDef_Struct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitTypeDef_Struct.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(MCUAtmosphereLEDG_Port,&GPIO_InitTypeDef_Struct);
+}
 
+void DS_GPIO_TogglePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
+{
+	assert_param(IS_GPIO_PIN(GPIO_Pin));
+	GPIOx->ODR ^= GPIO_Pin;
 }
 

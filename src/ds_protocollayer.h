@@ -13,6 +13,11 @@
 #define REQUESTFIXEDCOMMANDLEN        7         //Header + CmdType + CmdParam + DataLength + XOR8Bits + End
 #define ACKFIXEDCOMMANDLEN            6         //Header + AckCmdCode + AckCodeH + XOR8Bits  + End
 
+struct t_HandingFlag{
+	uint8_t		Flag;
+	uint8_t		position;
+};
+
 struct t_RevDataStruct{
 
     uint8_t     CmdType;
@@ -46,6 +51,7 @@ typedef struct {
   uint8_t tabCnt;
 }tTable;
 
+typedef struct t_HandingFlag	  HaningFlag,			*pHandingFlag;
 typedef struct t_RevACkStruct     AckedStruct,          *pAckedStruct;
 typedef struct t_RevDataStruct    RevDataStruct,        *pRevDataStruct;
 typedef struct t_NeedToAckStruct  NeedToAckStruct,      *pNeedToAckStruct;
@@ -62,5 +68,9 @@ DS_StatusTypeDef DS_HandingLeftBoardRequest(void);
 DS_StatusTypeDef DS_SendDataToCoreBoard(uint8_t *dataBuffer,uint16_t dataLength);
 
 DS_StatusTypeDef DS_SendDataToLeftDoorBoard(uint8_t *dataBuffer,uint16_t dataLength);
+
+DS_StatusTypeDef DS_CheckHandingFlag(void);
+
+DS_StatusTypeDef DS_SendAckData(void);
 
 #endif /* DS_PROTOCOLLAYER_H_ */

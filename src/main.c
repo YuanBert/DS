@@ -44,6 +44,7 @@ SOFTWARE.
 
 /* Private macro */
 /* Private variables */
+uint8_t gLEDFlag;
 uint8_t gADCConvOKFlag;
 int adcData;
 uint16_t gTimeCount;
@@ -86,6 +87,9 @@ int main(void)
 	  DS_HandingUartDataFromLeftBoard();
 	  DS_HandingLeftBoardRequest();
 
+	  DS_CheckHandingFlag();
+	  DS_SendAckData();
+
 
 	  if(1 == gADCConvOKFlag)
 	  {
@@ -104,6 +108,7 @@ void TIM3_IRQHandlerCallback()
 	if(gTimeCount > 5000)
 	{
 		gTimeCount = 0;
+		DS_GPIO_TogglePin(MCU_FAN_OUT_Port,MCU_FAN_OUT_Pin);
 	}
 }
 
